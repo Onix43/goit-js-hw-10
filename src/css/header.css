@@ -5,6 +5,10 @@
   display: flex;
   justify-content: space-between;
 }
+.nav-main {
+  display: flex;
+  justify-content: center;
+}
 .nav-logo {
   display: inline-flex;
   align-items: center;
