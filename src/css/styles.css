@@ -76,3 +76,12 @@ body {
   line-height: 1.5;
   letter-spacing: 0;
 }
+.form {
+  display: flex;
+  flex-direction: column;
+  max-width: 360px;
+  gap: 16px;
+}
+.back-link {
+  width: 60px;
+}
