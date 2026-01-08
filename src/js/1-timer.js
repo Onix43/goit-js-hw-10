@@ -14,6 +14,7 @@ const timerSeconds = document.querySelector('[data-seconds]');
 let userSelectedDate;
 
 let time = null;
+let timerId = null;
 button.disabled = true;
 
 const options = {
@@ -29,7 +30,7 @@ const options = {
     const selected = userSelectedDate.getTime();
 
     if (dateNow > selected) {
-      iziToast.show({
+      iziToast.error({
         title: 'Error',
         message: 'Illegal operation',
         // icon: "",
@@ -47,14 +48,6 @@ const options = {
     }
     if (dateNow < selected) {
       button.disabled = false;
-
-      const timeLeft = selected - dateNow;
-      time = convertMs(timeLeft);
-
-      timerDays.textContent = addLeadingZero(time.days);
-      timerHours.textContent = addLeadingZero(time.hours);
-      timerMinutes.textContent = addLeadingZero(time.minutes);
-      timerSeconds.textContent = addLeadingZero(time.seconds);
     }
   },
 };
@@ -84,42 +77,29 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 button.addEventListener('click', () => {
-  const int = setInterval(() => {
-    let { days, hours, minutes, seconds } = time;
+  button.disabled = true;
+  input.disabled = true;
 
-    if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
-      clearInterval(int);
+  const startTimer = () => {
+    const now = Date.now();
+    const timeLeft = userSelectedDate - now;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerId);
+      timerDays.textContent = addLeadingZero(0);
+      timerHours.textContent = addLeadingZero(0);
+      timerMinutes.textContent = addLeadingZero(0);
+      timerSeconds.textContent = addLeadingZero(0);
       input.disabled = false;
       return;
     }
-
-    if (seconds > 0) {
-      seconds -= 1;
-    } else {
-      seconds = 59;
-      if (minutes > 0) {
-        minutes -= 1;
-      } else {
-        minutes = 59;
-        if (hours > 0) {
-          hours -= 1;
-        } else {
-          hours = 23;
-          if (days > 0) {
-            days -= 1;
-          }
-        }
-      }
-    }
-
-    time = { days, hours, minutes, seconds };
-
+    const { days, hours, minutes, seconds } = convertMs(timeLeft);
     timerDays.textContent = addLeadingZero(days);
     timerHours.textContent = addLeadingZero(hours);
     timerMinutes.textContent = addLeadingZero(minutes);
     timerSeconds.textContent = addLeadingZero(seconds);
-  }, 1000);
+  };
 
-  button.disabled = true;
-  input.disabled = true;
+  startTimer();
+  timerId = setInterval(startTimer, 1000);
 });
